@@ -27,7 +27,7 @@ spider.scrape_future_games(
     next_n_rounds=1
     )
 ```
-- `fixtures_url` - url to the page with future games for given league or team. 
+- `fixtures_url` - url to the page with future games for given league or team.  
 league view: https://www.flashscore.com/football/germany/bundesliga/fixtures/  
 team view: https://www.flashscore.com/team/liverpool/lId4TMwf/fixtures/
 - `next_n_rounds` - number of nearest round (league view) or games (team view) to be scraped
