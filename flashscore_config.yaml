@@ -1,0 +1,124 @@
+---
+title: Flashscore.com
+page_type:
+  overview/fixtures:
+  # 'Future games'
+    containers:
+      selector: ".event__match"
+      elements:
+        popup_url::game_url: "::"
+        datetime: ".event__time::text"
+        home: ".event__participant.event__participant--home::text"
+        away: ".event__participant.event__participant--away::text"
+
+  overview/results:
+  # 'Past games'
+    containers:
+      selector: ".event__match"
+      elements:
+        popup_url::game_url: "::"
+        datetime: ".event__time::text"
+        home: ".event__participant.event__participant--home::text"
+        away: ".event__participant.event__participant--away::text"
+        goals_home: ".event__score.event__score--home::text"
+        goals_away: ".event__score.event__score--away::text"
+
+  future_game/info:
+    elements:
+      datetime: ".duelParticipant__startTime div::text"
+      home: ".duelParticipant__home .participant__participantName.participant__overflow .participant__participantName.participant__overflow::text"
+      away: ".duelParticipant__away .participant__participantName.participant__overflow .participant__participantName.participant__overflow::text"
+      league: ".tournamentHeader__country a::text"
+      referee: ".mi__item:has-text('REFEREE')::text"
+      odds_home: ".oddsRow .oddsRowContent:nth-child(1) .cell.o_1 .oddsValueInner::text"
+      odds_draw: ".oddsRow .oddsRowContent:nth-child(1) .cell.o_0 .oddsValueInner::text"
+      odds_away: ".oddsRow .oddsRowContent:nth-child(1) .cell.o_2 .oddsValueInner::text"
+
+  future_game/odds/double-chance:
+    elements:
+      odds_dc_home: ".ui-table__body .ui-table__row:nth-child(1) .oddsCell__odd:nth-child(2) span::text"
+      odds_dc_away:  ".ui-table__body .ui-table__row:nth-child(1) .oddsCell__odd:nth-child(4) span::text"
+
+  future_game/odds/over-under:
+    containers: 
+      selector: ".ui-table.oddsCell__odds .ui-table__row"
+      elements:
+        goals: ".oddsCell__noOddsCell::text"
+        over: ".oddsCell__odd:nth-child(3)::text"
+        under: ".oddsCell__odd:nth-child(4)::text"
+  
+  future_game/h2h/last_games_home:
+    containers:
+      selector: ".h2h__section.section:nth-child(1) .h2h__row"
+      elements:
+        popup_url::game_url: "::"
+        datetime: ".h2h__date::text"
+        league: ".h2h__event::title"
+        home: ".h2h__homeParticipant.h2h__participant::text"
+        away: ".h2h__awayParticipant.h2h__participant::text" 
+        goals_home: ".h2h__result span:nth-child(1)::text"
+        goals_away: ".h2h__result span:nth-child(2)::text"
+        # winner: ".h2h__icon div[title]::title"
+
+  future_game/h2h/last_games_away:
+    containers:
+      selector: ".h2h__section.section:nth-child(2) .h2h__row"
+      elements:
+        popup_url::game_url: "::"
+        datetime: ".h2h__date::text"
+        league: ".h2h__event::title"
+        home: ".h2h__homeParticipant.h2h__participant::text"
+        away: ".h2h__awayParticipant.h2h__participant::text" 
+        goals_home: ".h2h__result span:nth-child(1)::text"
+        goals_away: ".h2h__result span:nth-child(2)::text"
+        # winner: ".h2h__icon div[title]::title"
+  
+  future_game/h2h/last_games_h2h:
+    containers:
+      selector: ".h2h__section.section:nth-child(3) .h2h__row"
+      elements:
+        popup_url::game_url: "::"
+        datetime: ".h2h__date::text"
+        league: ".h2h__event::title"
+        home: ".h2h__homeParticipant.h2h__participant::text"
+        away: ".h2h__awayParticipant.h2h__participant::text" 
+        goals_home: ".h2h__result span:nth-child(1)::text"
+        goals_away: ".h2h__result span:nth-child(2)::text"
+
+  future_game/standings:
+    containers:
+      selector: ".ui-table__row"
+      elements:
+        rank: ".tableCellRank::text"
+        team: ".tableCellParticipant__name::text"
+        points: ".table__cell--points::text"
+
+  past_game/info:
+    elements:
+      datetime: ".duelParticipant__startTime::text"
+      league: ".tournamentHeader__country a::text"
+      home: ".duelParticipant__home a.participant__participantName::text"
+      away: ".duelParticipant__away a.participant__participantName::text"
+      goals_home: ".duelParticipant__score .detailScore__wrapper span:nth-child(1)::text"
+      goals_away: ".duelParticipant__score .detailScore__wrapper span:nth-child(3)::text"
+      odds_winner: ".oddsRowContent:nth-child(1) .odds.odds .cellWrapper span[class*='Winner'] .oddsValueInner::text"
+      referee: ".mi__item:has-text('REFEREE')::text"
+      attendance: ".mi__item:has-text('ATTENDANCE')::text"
+
+  past_game/events:
+    containers:
+      selector: ".smv__verticalSections.section .smv__participantRow"
+      elements:
+        event_name: "div[class*='smv__incidentIcon'] svg::class"
+        time: ".smv__timeBox::text"
+        team: "::class"
+        player: "a.smv__playerName::text"
+
+  past_game/stats:
+    containers:
+      selector: ".stat__row"
+      elements:
+        stat_name: ".stat__categoryName::text"
+        home: ".stat__homeValue::text"
+        away: ".stat__awayValue::text"
+
