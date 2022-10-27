@@ -6,8 +6,8 @@ from typing import List, Optional, Union
 
 class PastGameStat(BaseModel):
     stat_name: str
-    home: Union[int, float]
-    away: Union[int, float]
+    home: Union[float, int]
+    away: Union[float, int]
 
 
 class PastGameEvent(BaseModel):
@@ -95,9 +95,9 @@ class FutureGameDetails(BaseModel):
     odds_draw: float
     odds: Optional[GameDetailedOdds]
     
-    past_games_home: Optional[List[Union[PastGameOverview, PastGameDetails]]]
-    past_games_away: Optional[List[Union[PastGameOverview, PastGameDetails]]]
-    past_games_h2h: Optional[List[Union[PastGameOverview, PastGameDetails]]]
+    past_games_home: Optional[List[Union[PastGameDetails, PastGameOverview]]]
+    past_games_away: Optional[List[Union[PastGameDetails, PastGameOverview]]]
+    past_games_h2h: Optional[List[Union[PastGameDetails, PastGameOverview]]]
     
     # post-game details:
     goals_home: Optional[int]

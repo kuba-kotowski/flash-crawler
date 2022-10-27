@@ -10,7 +10,8 @@ def update_past_game_details(past_game: Dict) -> Dict:
         "league": process_league(output["league"])[0],
         "round": process_league(output["league"])[1],
         "referee": process_ref(output["referee"]),
-        "attendance": process_attendance(output["attendance"])
+        "attendance": process_attendance(output["attendance"]), 
+        "odds_winner": process_odds(output["odds_winner"])
     })
     return output
 
@@ -21,7 +22,10 @@ def update_future_game_details(future_game: Dict) -> Dict:
         "datetime": process_datetime(output["datetime"]),
         "league": process_league(output["league"])[0],
         "round": process_league(output["league"])[1],
-        "referee": process_ref(output["referee"])
+        "referee": process_ref(output["referee"]),
+        "odds_home": process_odds(output["odds_home"]),
+        "odds_draw": process_odds(output["odds_draw"]),
+        "odds_away": process_odds(output["odds_away"]),
     })
     return output
 
@@ -50,6 +54,13 @@ def process_attendance(attendance: str) -> int:
         return 0
 
 
+def process_odds(odds: str) -> float:
+    if odds:
+        return float(odds)
+    else:
+        return 0.0
+
+
 def process_league(string: str) -> Tuple[str, str]:
     league = re.sub("\([A-z]*\)", "", string).strip()
     if "-" in league:
@@ -59,11 +70,12 @@ def process_league(string: str) -> Tuple[str, str]:
 
 
 def process_stat(stat: Dict) -> Dict:
-    stat_output = {
-        "stat_name": re.sub("[ |-]", "_", stat["stat_name"].lower()),
-        "home": process_stat_value(stat["home"]),
-        "away": process_stat_value(stat["away"])
-    }
+    stat_output = stat.copy()
+    stat_output.update({
+        "stat_name": re.sub("[ |-]", "_", stat_output["stat_name"].lower()),
+        "home": process_stat_value(stat_output["home"]),
+        "away": process_stat_value(stat_output["away"])
+    })
     return stat_output
 
 
@@ -75,12 +87,13 @@ def process_stat_value(value: str) -> int:
 
 
 def process_event(event: Dict) -> Dict:
-    event_output = {
-        "event_name": process_event_name(event["event_name"]),
-        "time": process_event_time(event["time"]),
-        "team": process_event_team(event["team"]),
-        "player": event["player"]
-    }
+    event_output = event.copy()
+    event_output.update({
+        "event_name": process_event_name(event_output["event_name"]),
+        "time": process_event_time(event_output["time"]),
+        "team": process_event_team(event_output["team"]),
+        "player": event_output["player"]
+    })
     return event_output
 
 
@@ -112,15 +125,36 @@ def process_event_team(team: str) -> str:
         return "-"
 
 
+def update_odds_dc(odds: Dict) -> Dict:
+    odds_output = odds.copy()
+    odds_output.update({
+        "odds_dc_home": process_odds(odds_output["odds_dc_home"]),
+        "odds_dc_away": process_odds(odds_output["odds_dc_away"]),
+    })
+    return odds_output
+
+
 def filter_odds_over_under(odds: List[Dict]) -> Dict:
-    odds15 = [element for element in odds if element["goals"]=="1.5"][0]
-    output = {
-        "odds_over_15": odds15["over"],
-        "odds_under_15": odds15["under"]
+    odds15 = [element for element in odds if element["goals"]=="1.5"]
+    odds25 = [element for element in odds if element["goals"]=="2.5"]
+    if not odds15:
+        output = {
+            "odds_over_15": 0.0,
+            "odds_under_15": 0.0
         }
-    odds25 = [element for element in odds if element["goals"]=="2.5"][0]
-    output.update({
-        "odds_over_25": odds25["over"],
-        "odds_under_25": odds25["under"]
+    else:
+        output = {
+            "odds_over_15": process_odds(odds15[0]["over"]),
+            "odds_under_15": process_odds(odds15[0]["under"])
+        }
+    if not odds25:
+        output.update({
+            "odds_over_25": 0.0,
+            "odds_under_25": 0.0
+        }) 
+    else: 
+        output.update({
+            "odds_over_25": process_odds(odds25[0]["over"]),
+            "odds_under_25": process_odds(odds25[0]["under"])
         })    
     return output

@@ -2,7 +2,7 @@ from time import sleep
 from typing import Dict, List, Union
 
 from .engines import ScrapingEngine, ConfigParser
-from .utility_functions.parsing_functions import process_datetime, update_past_game_details, process_event, process_stat, update_future_game_details, filter_odds_over_under
+from .utility_functions.parsing_functions import process_datetime, update_past_game_details, process_event, process_stat, update_future_game_details, filter_odds_over_under, update_odds_dc
 from .models import PastGameOverview, PastGameDetails, FutureGameOverview, FutureGameDetails, PastGameEvent, PastGameStat, GameDetailedOdds
 
 
@@ -175,16 +175,17 @@ class FlashCrawler:
 
     def scrape_future_games_details(
             self, 
-            fixtures_url, next_n_rounds=1,
+            fixtures_url, 
+            next_n_rounds=1,
             odds=True, 
             past_games="last_5", past_games_details=True, past_games_events=True, past_games_stats=True, 
             current_standings=True
         ) -> List[FutureGameDetails]:
+        """
+        FUTURE GAMES LIST WITH DETAILS
+        """
         games = self.scrape_future_games(fixtures_url, next_n_rounds)
-        output = []
-        for game in games:
-            print(game.home)
-            output.append(self.scrape_future_game_details(
+        output = [self.scrape_future_game_details(
                     game.game_url, 
                     odds, 
                     past_games, 
@@ -192,7 +193,7 @@ class FlashCrawler:
                     past_games_events, 
                     past_games_stats, 
                     current_standings
-                ))
+                ) for game in games]
         return output
 
 
@@ -213,7 +214,7 @@ class FlashCrawler:
         self.driver.navigate_to(odds_url_double_chance)
         double_chance_odds_scenario = self.parser.get_elements_selectors("future_game/odds/double-chance") 
         elements = self.driver.extract_all_elements(double_chance_odds_scenario)
-        return elements
+        return update_odds_dc(elements)
 
 
     def scrape_game_odds_over_under(self, game_overview_url: str) -> Dict:
