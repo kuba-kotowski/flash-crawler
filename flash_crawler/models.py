@@ -32,6 +32,15 @@ class PastGameOverview(BaseModel):
     goals_away: int
 
 
+class GameDetailedOdds(BaseModel):
+    odds_dc_home: float     # double chance 10 (home or draw)
+    odds_dc_away: float     # double chance 02 (away or draw)
+    odds_over_15: float     # over 1.5 goals
+    odds_under_15: float    # under 1.5 goals
+    odds_over_25: float     # over 2.5 goals
+    odds_under_25: float    # under 2.5 goals
+
+
 class PastGameDetails(BaseModel):
     """
     Details for past game - info visible in detailed match-summary view.
@@ -47,22 +56,17 @@ class PastGameDetails(BaseModel):
     goals_home: int
     goals_away: int
     
-    odds_winner: float
+    # odds_winner: float
+    odds_home: float
+    odds_draw: float
+    odds_away: float
     
+    odds: Optional[GameDetailedOdds]
     events: Optional[List[PastGameEvent]]
     stats: Optional[List[PastGameStat]]
     
     referee: str
     attendance: int
-
-
-class GameDetailedOdds(BaseModel):
-    odds_dc_home: float
-    odds_dc_away: float
-    odds_over_15: float
-    odds_under_15: float
-    odds_over_25: float
-    odds_under_25: float
 
 
 class FutureGameOverview(BaseModel):

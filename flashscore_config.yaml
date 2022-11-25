@@ -101,7 +101,10 @@ page_type:
       away: ".duelParticipant__away a.participant__participantName::text"
       goals_home: ".duelParticipant__score .detailScore__wrapper span:nth-child(1)::text"
       goals_away: ".duelParticipant__score .detailScore__wrapper span:nth-child(3)::text"
-      odds_winner: ".oddsRowContent:nth-child(1) .odds.odds .cellWrapper span[class*='Winner'] .oddsValueInner::text"
+      # odds_winner: ".oddsRowContent:nth-child(1) .odds.odds .cellWrapper span[class*='Winner'] .oddsValueInner::text"
+      odds_home: ".oddsRow .oddsRowContent:nth-child(1) .cell.o_1 .oddsValueInner::text"
+      odds_draw: ".oddsRow .oddsRowContent:nth-child(1) .cell.o_0 .oddsValueInner::text"
+      odds_away: ".oddsRow .oddsRowContent:nth-child(1) .cell.o_2 .oddsValueInner::text"
       referee: ".mi__item:has-text('REFEREE')::text"
       attendance: ".mi__item:has-text('ATTENDANCE')::text"
 

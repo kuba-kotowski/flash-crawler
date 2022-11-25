@@ -1,3 +1,4 @@
+from os import stat
 from time import sleep
 from typing import Dict, List, Union
 
@@ -13,9 +14,9 @@ class FlashCrawler:
         self.open_main_page()
 
 
-    def __del__(self):
-        self.driver.browser.close()
-        self.driver.playwright.stop()
+    # def __del__(self):
+    #     self.driver.browser.close()
+    #     self.driver.playwright.stop()
 
 
     def open_main_page(self):
@@ -33,7 +34,7 @@ class FlashCrawler:
 
 
     @staticmethod
-    def check_url(url, type) -> str:
+    def validate_url(url, type) -> str:
         validate = {
             "future": ["/fixtures", "/fixtures/"],
             "past": ["/results", "/results/"]
@@ -46,9 +47,13 @@ class FlashCrawler:
 
     @staticmethod
     def create_url_future_game_odds(base_url, odds_type) -> str:
-        if odds_type == "double_chance":
+        if "match-summary/match-summary" in base_url and odds_type == "double_chance":
+            return base_url.replace("/match-summary/match-summary", "/odds-comparison/double-chance/full-time")
+        elif "match-summary/match-summary" not in base_url and odds_type == "double_chance":
             return base_url.replace("/match-summary", "/odds-comparison/double-chance/full-time")
-        elif odds_type == "over_under":
+        elif "match-summary/match-summary" in base_url and odds_type == "over_under":
+            return base_url.replace("/match-summary/match-summary", "/odds-comparison/over-under/full-time")
+        elif "match-summary/match-summary" not in base_url and odds_type == "over_under":
             return base_url.replace("/match-summary", "/odds-comparison/over-under/full-time")
 
 
@@ -92,7 +97,7 @@ class FlashCrawler:
         """
         FUTURE GAMES OVERVIEW - LIST
         """
-        self.check_url(fixtures_url, "future")
+        self.validate_url(fixtures_url, "future")
         self.driver.navigate_to(fixtures_url)
         if next_n_rounds > 10:
             next_n_rounds=10
@@ -271,7 +276,7 @@ class FlashCrawler:
         """
         past_games = self.scrape_game_h2h(game_overview_url, h2h_type, show_more)
         urls = [past_game.game_url for past_game in past_games]
-        elements = [self.scrape_past_game_details(
+        elements = [self.get_past_game_details(
             game_overview_url=url,
             events=events,
             stats=stats
@@ -305,14 +310,20 @@ class FlashCrawler:
         }
 
 
-    def scrape_past_games(self, results_url, last_n_rounds=1) -> List[PastGameOverview]:
+    def get_past_games_list_overview(self, results_url, last_n_rounds=1) -> List[PastGameOverview]:
         """
         PAST GAMES OVERVIEW - LIST
         """
-        self.check_url(results_url, "past")
+        self.validate_url(results_url, "past")
         self.driver.navigate_to(results_url)
-        if last_n_rounds > 10:
-            last_n_rounds=10
+        i = 1
+        n_max = 5
+        while i <= n_max and self.driver.css_exists(".event__more.event__more--static"):
+            self.driver.click(".event__more.event__more--static", timeout=3000)
+            sleep(1)
+            i+=1
+        # if last_n_rounds > 10:
+        #     last_n_rounds=10
         game_containers_selector = self.parser.get_containers_selector("overview/results")
         game_containers_elements = self.parser.get_containers_elements_selectors("overview/results")
         containers = self.driver.find_many_by_selector(selector=game_containers_selector)
@@ -333,7 +344,7 @@ class FlashCrawler:
         return [PastGameOverview(**element) for element in elements]
 
 
-    def scrape_past_game_details(self, game_overview_url: str, events=True, stats=True) -> PastGameDetails:
+    def get_past_game_details(self, game_overview_url: str, odds=True, events=True, stats=True) -> PastGameDetails:
         """
         PAST GAME - ALL DETAILS
         """
@@ -342,12 +353,35 @@ class FlashCrawler:
         elements = self.driver.extract_all_elements(
             all_elements_selectors=elements_scenario
         )
+        if odds:
+            elements["odds"] = self.scrape_game_odds(game_overview_url)
         if events:
             elements["events"] = self.scrape_past_game_events(game_overview_url)
         if stats:
             elements["stats"] = self.scrape_past_game_stats(game_overview_url)
         elements["game_url"] = game_overview_url
         return PastGameDetails(**update_past_game_details(elements))
+
+
+    def get_past_games_list_details(self, results_url, last_n_rounds=1, events=True, stats=True) -> List[PastGameDetails]:
+        """
+        PAST GAMES - LIST WITH ALL DETAILS
+        """
+        past_games = self.get_past_games_list_overview(results_url=results_url, last_n_rounds=last_n_rounds)
+        # output = [self.get_past_game_details(
+        #     game_overview_url=past_game.game_url, 
+        #     events=events, 
+        #     stats=stats
+        # ) for past_game in past_games]
+        output = []
+        for past_game in past_games:
+            output.append(self.get_past_game_details(
+                game_overview_url=past_game.game_url, 
+                events=events, 
+                stats=stats
+            ))
+            print(past_game.game_url)
+        return output
 
 
     def scrape_past_game_events(self, game_overview_url: str) -> List[PastGameEvent]:
@@ -388,7 +422,7 @@ class FlashCrawler:
         POST GAME - RESULTS & ADDITIONAL INFORMATION
         """
         elements = future_game.dict()
-        past_game_details = self.scrape_past_game_details(
+        past_game_details = self.get_past_game_details(
             game_overview_url=elements["game_url"],
             events=events, 
             stats=stats

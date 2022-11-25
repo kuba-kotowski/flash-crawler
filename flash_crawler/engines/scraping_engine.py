@@ -106,3 +106,10 @@ class ScrapingEngine:
 
     def click(self, selector, **kwargs):
         self.page.click(selector, **kwargs)
+
+    def css_exists(self, selector):
+        locators = self.page.locator(selector)
+        if locators.count() > 0:
+            return True
+        else: 
+            return False

@@ -1,21 +1,34 @@
+import pandas as pd
+import pymongo
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
+
 from flash_crawler.flash_crawler import FlashCrawler
 
-spider = FlashCrawler(
-    config_path="flashscore_config.yaml",
-    headless_browser=False
-)
 
-# scrape all info about games from next Bundesliga round:
-games = spider.scrape_future_games_details(
-    fixtures_url="https://www.flashscore.com/football/germany/bundesliga/fixtures/",
-    next_n_rounds=1,
-    odds=True,
-    past_games="last_5",
-    past_games_details=True, 
-    past_games_events=False,
-    past_games_stats=False,
-    current_standings=False
-)
+def past_games_details(results_url, last_n_rounds):
+    spider = FlashCrawler(
+        config_path="flashscore_config.yaml",
+        headless_browser=False
+    )
+    output = spider.scrape_past_games_details(
+        results_url=results_url,
+        last_n_rounds=last_n_rounds
+    )
+    spider.driver.browser.close()
+    spider.driver.playwright.stop()
 
-spider.driver.browser.close()
-spider.driver.playwright.stop()
+    return output
+
+
+
+if __name__ == "__main__":
+    results_url = "https://www.flashscore.com/football/europe/champions-league/results/"
+    last_n_rounds = 30
+    output = past_games_details(
+        url=results_url, 
+        last_n_rounds=last_n_rounds
+        )
+    print(output)

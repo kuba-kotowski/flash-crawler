@@ -11,7 +11,9 @@ def update_past_game_details(past_game: Dict) -> Dict:
         "round": process_league(output["league"])[1],
         "referee": process_ref(output["referee"]),
         "attendance": process_attendance(output["attendance"]), 
-        "odds_winner": process_odds(output["odds_winner"])
+        "odds_home": process_odds(output["odds_home"]),
+        "odds_draw": process_odds(output["odds_draw"]),
+        "odds_away": process_odds(output["odds_away"])
     })
     return output
 
@@ -64,7 +66,7 @@ def process_odds(odds: str) -> float:
 def process_league(string: str) -> Tuple[str, str]:
     league = re.sub("\([A-z]*\)", "", string).strip()
     if "-" in league:
-        return league.split("-", 1)[0], league.split("-", 1)[1] 
+        return league.split("-", 1)[0].strip(), league.split("-", 1)[1].strip()
     else:
         return league, "-" 
 
@@ -104,8 +106,10 @@ def process_event_name(name: str) -> str:
         return "red_card"
     elif "card-ico" in name:
         return "yellow_red_card"
+    elif "footballOwnGoal-ico" in name:
+        return "own_goal"
     else:
-        return name.replace("soccer", "goal")
+        return name.replace("soccer", "goal").strip()
 
 
 def process_event_time(time: str) -> int:
