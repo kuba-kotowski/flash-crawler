@@ -31,6 +31,7 @@ spider = FlashCrawler(
 
 ### 2. FlashCrawler main methods:
 
+
 #### FlashCrawler.get_past_game_details
 Scrapes single past game's details (from detailed view - details, odds, events, stats).
 ``` python
@@ -91,6 +92,7 @@ class PastGameStat(BaseModel):
     away: Union[float, int]                 # away team's value
 ```
 
+
 #### FlashCrawler.get_past_games_list_overview
 Scrapes list of past games with overview (datetime, teams, goals).
 ``` python
@@ -136,7 +138,7 @@ past_game_details = spider.get_past_games_list_details(
 - `events: bool` - include list of events (goals, cards, substitutions etc.), default True
 - `stats: bool` - include stats, default True
 
-**Returns list of [`PastGameDetails`](#### FlashCrawler.get_past_game_details) objects.**
+**Returns list of [`PastGameDetails`](#flashcrawlerget_past_game_details) objects.**
 
 
 ## Authors:
