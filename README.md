@@ -6,13 +6,13 @@ Web-scraping project which aim is to scrape, process and save the data from [**F
 2. [Getting started](#gettingstarted)
 3. [Quick start](#quickstart)
 4. [Usage](#usage)
-	- [FlashCrawler.get_future_game_details](#flascrawlerget_future_game_details)
-	- [FlashCrawler.get_future_games_list_overview](#flascrawlerget_future_games_list_overview)
-	- [FlashCrawler.get_future_games_list_details](#flascrawlerget_future_games_list_details)
-	- [FlashCrawler.get_past_game_details](#flascrawlerget_past_game_details)
-	- [FlashCrawler.get_past_games_list_overview](#flascrawlerget_past_games_list_overview)
-	- [FlashCrawler.get_past_games_list_details](#flascrawlerget_past_games_list_details)
-	- [FlashCrawler.update_post_game_info]()
+	- [FlashCrawler.get_future_game_details](#flashcrawlerget_future_game_details)
+	- [FlashCrawler.get_future_games_list_overview](#flashcrawlerget_future_games_list_overview)
+	- [FlashCrawler.get_future_games_list_details](#flashcrawlerget_future_games_list_details)
+	- [FlashCrawler.get_past_game_details](#flashcrawlerget_past_game_details)
+	- [FlashCrawler.get_past_games_list_overview](#flashcrawlerget_past_games_list_overview)
+	- [FlashCrawler.get_past_games_list_details](#flashcrawlerget_past_games_list_details)
+	- [FlashCrawler.update_post_game_info](#)
 5. [Models](#models)
 	- [FutureGameDetails](#futuregamedetails)
 	- [FutureGameOverview](futuregameoverview)
@@ -107,13 +107,13 @@ spider.driver.playwright.stop()
 
 # Usage
 Find detailed description of main FlashCrawler's methods:
-- [`FlashCrawler.get_future_game_details`](#flascrawlerget_future_game_details) - single future game's details
-- [`FlashCrawler.get_future_games_list_overview`](#flascrawlerget_future_games_list_overview) - list of future games' overview
-- [`FlashCrawler.get_future_games_list_details`](#flascrawlerget_future_games_list_details) - list of future games' details
-- [`FlashCrawler.get_past_game_details`](#flascrawlerget_past_game_details) - single past game's details
-- [`FlashCrawler.get_past_games_list_overview`](#flascrawlerget_past_games_list_overview) - list of past games' overview
-- [`FlashCrawler.get_past_games_list_details`](#flascrawlerget_past_games_list_details) - list of past games' details
-- [`FlashCrawler.update_post_game_info`]() - post-game update of previously scraped future game
+- [`FlashCrawler.get_future_game_details`](#flashcrawlerget_future_game_details) - single future game's details
+- [`FlashCrawler.get_future_games_list_overview`](#flashcrawlerget_future_games_list_overview) - list of future games' overview
+- [`FlashCrawler.get_future_games_list_details`](#flashcrawlerget_future_games_list_details) - list of future games' details
+- [`FlashCrawler.get_past_game_details`](#flashcrawlerget_past_game_details) - single past game's details
+- [`FlashCrawler.get_past_games_list_overview`](#flashcrawlerget_past_games_list_overview) - list of past games' overview
+- [`FlashCrawler.get_past_games_list_details`](#flashcrawlerget_past_games_list_details) - list of past games' details
+- [`FlashCrawler.update_post_game_info`](#) - post-game update of previously scraped future game
 
 ## FlashCrawler.get_future_game_details
 Scrapes single future game's details (from detailed view - details, odds, standings, h2h games with events/stats).
@@ -141,7 +141,7 @@ example: https://www.flashscore.com/match/hviCPdIh/#/match-summary
 - `mongodb_collection_name: str`- name of MongoDB collection name (doesn't save if eqauls to None), default None
 
 **Returns**:
- - `FutureGameDetails` object
+ - [`FutureGameDetails`](#futuregamedetails) object
 
 
 ## FlashCrawler.get_future_games_list_overview
@@ -162,7 +162,7 @@ example: https://www.flashscore.com/football/italy/serie-a/fixtures/, https://ww
 - `mongodb_collection_name` - name of MongoDB collection name (doesn't save if eqauls to None), default None
 
 **Returns**:
- - list of `FutureGameOverview` objects
+ - list of [`FutureGameOverview`](#futuregameoverview) objects
 
 
 ## FlashCrawler.get_future_games_list_details
@@ -196,7 +196,7 @@ example: https://www.flashscore.com/football/italy/serie-a/fixtures/, https://ww
 - `mongodb_collection_name: str`- name of MongoDB collection name (doesn't save if eqauls to None), default None
 
 **Returns**:
- - list of `FutureGameDetails` objects
+ - list of [`FutureGameDetails`](#futuregamedetails) objects
  
  
 ## FlashCrawler.get_past_game_details
@@ -219,7 +219,7 @@ example: https://www.flashscore.com/match/K4ulGL9M/#/match-summary/match-summary
 - `mongodb_collection_name: str`- name of MongoDB collection name (doesn't save if eqauls to None), default None
 
 **Returns**:
- - `PastGameDetails` object
+ - [`PastGameDetails`](#pastgamedetails) object
 
 ## FlashCrawler.get_past_games_list_overview
 Scrapes list of past games with overview (datetime, teams, goals).
@@ -237,7 +237,7 @@ example: https://www.flashscore.com/football/italy/serie-a/results/, https://www
 - `mongodb_collection_name: str`- name of MongoDB collection name (doesn't save if eqauls to None), default None
 
 **Returns:**
-- list of `PastGameOverview` objects
+- list of [`PastGameOverview`](#pastgameoverview) objects
 
 
 ## FlashCrawler.get_past_games_list_details
@@ -262,7 +262,7 @@ example: https://www.flashscore.com/football/italy/serie-a/results/, https://www
 - `mongodb_collection_name: str`- name of MongoDB collection name (doesn't save if eqauls to None), default None
 
 **Returns:**
-- list of [`PastGameDetails`](#flashcrawlerget_past_game_details) objects
+- list of [`PastGameDetails`](#pastgamedetails) objects
 
 
 
@@ -277,9 +277,6 @@ Find details of used models:
 - [PastGameStat](#pastgamestat) - single statistic for past game (possesions, shots, offsides, corners etc.)
 - [PastGameEvent](#pastgameevent) - single event for past game (goal, substitution, yellow/red card etc.)
 
-
-# Models
-List of all models.
 
 ## FutureGameDetails
 
