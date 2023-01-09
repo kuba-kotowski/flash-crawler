@@ -114,10 +114,12 @@ def process_event_name(name: str) -> str:
 
 def process_event_time(time: str) -> int:
     time = time.replace("'", "")
-    if "+" not in time:
+    if time and "+" in time:
+        return int(time.split("+")[0])+int(time.split("+")[1])
+    elif time:
         return int(time)
     else:
-        return int(time.split("+")[0])+int(time.split("+")[1])
+        return 0
 
 
 def process_event_team(team: str) -> str:
