@@ -6,8 +6,9 @@ page_type:
     containers:
       selector: ".event__match"
       elements:
-        popup_url::game_url: "::"
-        datetime: ".event__time::text"
+        popup::game_url: "::"
+        popup::datetime: ".duelParticipant__startTime div::text"
+        # datetime: ".event__time::text"
         home: ".event__participant.event__participant--home::text"
         away: ".event__participant.event__participant--away::text"
 
@@ -16,8 +17,9 @@ page_type:
     containers:
       selector: ".event__match"
       elements:
-        popup_url::game_url: "::"
-        datetime: ".event__time::text"
+        popup::game_url: "::"
+        popup::datetime: ".duelParticipant__startTime div::text"
+        # datetime: ".event__time::text"
         home: ".event__participant.event__participant--home::text"
         away: ".event__participant.event__participant--away::text"
         goals_home: ".event__score.event__score--home::text"
@@ -51,8 +53,9 @@ page_type:
     containers:
       selector: ".h2h__section.section:nth-child(1) .h2h__row"
       elements:
-        popup_url::game_url: "::"
-        datetime: ".h2h__date::text"
+        popup::game_url: "::"
+        popup::datetime: ".duelParticipant__startTime div::text"
+        # datetime: ".h2h__date::text"
         league: ".h2h__event::title"
         home: ".h2h__homeParticipant.h2h__participant::text"
         away: ".h2h__awayParticipant.h2h__participant::text" 
@@ -64,8 +67,9 @@ page_type:
     containers:
       selector: ".h2h__section.section:nth-child(2) .h2h__row"
       elements:
-        popup_url::game_url: "::"
-        datetime: ".h2h__date::text"
+        popup::game_url: "::"
+        popup::datetime: ".duelParticipant__startTime div::text"
+        # datetime: ".h2h__date::text"
         league: ".h2h__event::title"
         home: ".h2h__homeParticipant.h2h__participant::text"
         away: ".h2h__awayParticipant.h2h__participant::text" 
@@ -77,8 +81,9 @@ page_type:
     containers:
       selector: ".h2h__section.section:nth-child(3) .h2h__row"
       elements:
-        popup_url::game_url: "::"
-        datetime: ".h2h__date::text"
+        popup::game_url: "::"
+        popup::datetime: ".duelParticipant__startTime div::text"
+        # datetime: ".h2h__date::text"
         league: ".h2h__event::title"
         home: ".h2h__homeParticipant.h2h__participant::text"
         away: ".h2h__awayParticipant.h2h__participant::text" 

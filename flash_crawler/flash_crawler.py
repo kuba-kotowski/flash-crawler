@@ -152,7 +152,14 @@ class FlashCrawler:
         config = {
             "last_5": 0,
             "last_10": 1,
-            "last_15": 2
+            "last_15": 2, 
+            "last_20": 3,
+            "last_25": 4,
+            "last_30": 5,
+            "last_35": 6,
+            "last_40": 7,
+            "last_45": 8,
+            "last_50": 9
         }
         if not past_games:
             return -1
@@ -168,6 +175,7 @@ class FlashCrawler:
             odds=True, 
             past_games="last_5", past_games_details=True, past_games_odds=True, past_games_events=True, past_games_stats=True, 
             current_standings=True,
+            h2h_past_games="last_10", # n-past games direct between two teams (head-to-head)
             mongodb_collection_name=None
         ) -> FutureGameDetails:
         """
@@ -188,20 +196,23 @@ class FlashCrawler:
             })
         
         past_games_int = self.parse_past_games_argument(past_games)
+        h2h_past_games_int = self.parse_past_games_argument(h2h_past_games)
+        
         if past_games_int != -1 and not past_games_details:
             elements.update({
                 "past_games_home": self.scrape_game_h2h(game_overview_url, "home", past_games_int),
                 "past_games_away": self.scrape_game_h2h(game_overview_url, "away", past_games_int),
-                "past_games_h2h": self.scrape_game_h2h(game_overview_url, "h2h", past_games_int)
+                "past_games_h2h": self.scrape_game_h2h(game_overview_url, "h2h", h2h_past_games_int)
             })
         elif past_games_int != -1 and past_games_details:
             elements.update({
                 "past_games_home": self.scrape_game_h2h_details(game_overview_url, "home", past_games_int, past_games_odds, past_games_events, past_games_stats),
                 "past_games_away": self.scrape_game_h2h_details(game_overview_url, "away", past_games_int, past_games_odds, past_games_events, past_games_stats),
-                "past_games_h2h": self.scrape_game_h2h_details(game_overview_url, "h2h", past_games_int, past_games_odds, past_games_events, past_games_stats)
+                "past_games_h2h": self.scrape_game_h2h_details(game_overview_url, "h2h", h2h_past_games_int, past_games_odds, past_games_events, past_games_stats)
             })
         
         if current_standings:
+            #TODO: finalize the scrape_standings method - decide what to scrape
             # elements.update(self.scrape_standings)
             pass
         
@@ -210,6 +221,7 @@ class FlashCrawler:
         if mongodb_collection_name:
             mongodb_collection.insert_one(output.dict())
 
+        print(f"[FUTURE] Extracted info for {output.dict()['home']} vs {output.dict()['away']} game.")
         return output
 
 
@@ -227,6 +239,7 @@ class FlashCrawler:
         FUTURE GAMES LIST WITH DETAILS
         """
         games = self.get_future_games_list_overview(fixtures_url, next_n_rounds, next_n_days)
+        print(f"Number of games to get details from: {len(games)}")
         output = [self.get_future_game_details(
                     game.game_url, 
                     odds, 
@@ -288,8 +301,13 @@ class FlashCrawler:
         sleep(1)
         i = 0
         while show_more != 0 and i < show_more:
-            for n in [1, 2, 3]:
-                self.driver.click(f".h2h__section.section:nth-child({n}) .h2h__showMore.showMore")
+            # clicking only home, away and h2h 'show more' buttons
+            map_side = {
+                "home": 1,
+                "away": 2,
+                "h2h": 3
+            }
+            self.driver.click(f".h2h__section.section:nth-child({map_side[h2h_type]}) .h2h__showMore.showMore", required=False)
             i+=1
         h2h_type_config = {
             "home": "future_game/h2h/last_games_home",
@@ -324,7 +342,7 @@ class FlashCrawler:
         return elements
 
 
-    def scrape_standings(self, game_overview_url: str, home: str, away: str) -> Dict: #TODO: which fields to include
+    def scrape_standings(self, game_overview_url: str, home: str, away: str) -> Dict:
         """
         FUTURE GAME ELEMENT - TABLE
         """
@@ -337,6 +355,7 @@ class FlashCrawler:
             containers=stand_containers,
             all_elements_selectors=stand_containers_elements
         )
+        # TODO: decide which information to include in this section
         [element.update({"rank": int(element["rank"].replace(".", ""))}) for element in elements]
         points_leader = int([element["points"] for element in elements if element["rank"]==1][0])
         home_standing = [element for element in elements if element["team"]==home][0]
@@ -350,7 +369,7 @@ class FlashCrawler:
         }
 
 
-    def get_past_games_list_overview(self, results_url, last_n_rounds=1, mongodb_collection_name=None) -> List[PastGameOverview]:
+    def get_past_games_list_overview(self, results_url, last_n_rounds=1, mongodb_collection_name=None, show_more_max_n=5) -> List[PastGameOverview]:
         """
         PAST GAMES OVERVIEW - LIST
         """
@@ -361,45 +380,41 @@ class FlashCrawler:
         self.validate_url(results_url, "past")
         self.driver.navigate_to(results_url)
         i = 1
-        n_max = 5
-        while i <= n_max and self.driver.css_exists(".event__more.event__more--static"):
+        while i <= show_more_max_n and self.driver.css_exists(".event__more.event__more--static"):
             self.driver.click(".event__more.event__more--static", timeout=3000)
             sleep(1)
             i+=1
-        # if last_n_rounds > 10:
-        #     last_n_rounds=10
+
         game_containers_selector = self.parser.get_containers_selector("overview/results")
         game_containers_elements = self.parser.get_containers_elements_selectors("overview/results")
         containers = self.driver.find_many_by_selector(selector=game_containers_selector)
+
         # get games only from n-last rounds/games:
         if results_url.startswith("https://www.flashscore.com/team/"):
             selected_games = self.filter_containers_games_view(containers, last_n_rounds)
         else:
             selected_games = self.filter_containers_rounds_view(containers, last_n_rounds)
 
-        # elements = self.driver.containers_extract_all_elements(
-        #     containers=selected_games, 
-        #     all_elements_selectors=game_containers_elements
-        #     )
-        
         output = list()        
         for container in selected_games:
             elements = self.driver.extract_all_elements(all_elements_selectors=game_containers_elements, container=container)
             elements["datetime"] = process_datetime(elements.get("datetime"))
+            
             if not mongodb_collection is None:
                 mongodb_collection.insert_one(PastGameOverview(**elements).dict())
+            
             output.append(PastGameOverview(**elements))
-
-        # [element.update({
-        #     "datetime": process_datetime(element.get("datetime"))
-        # }) for element in elements]
-
-        # return [PastGameOverview(**element) for element in elements]
 
         return output
 
 
-    def get_past_game_details(self, game_overview_url: str, odds=True, events=True, stats=True, mongodb_collection_name=None) -> PastGameDetails:
+    def get_past_game_details(
+            self, game_overview_url: str,
+            odds=True,
+            events=True,
+            stats=True,
+            past_games=None, past_games_details=True, past_games_odds=True, past_games_events=True, past_games_stats=True, # if past_games=None, the rest past_games_... args doesn't matter
+            mongodb_collection_name=None) -> PastGameDetails:
         """
         PAST GAME - ALL DETAILS
         """
@@ -421,26 +436,55 @@ class FlashCrawler:
             elements["stats"] = self.scrape_past_game_stats(game_overview_url)
         elements["game_url"] = game_overview_url
 
+        past_games_int = self.parse_past_games_argument(past_games)
+        if past_games_int != -1 and not past_games_details:
+            elements.update({
+                "past_games_home": self.scrape_game_h2h(game_overview_url, "home", past_games_int),
+                "past_games_away": self.scrape_game_h2h(game_overview_url, "away", past_games_int),
+                "past_games_h2h": self.scrape_game_h2h(game_overview_url, "h2h", 1)
+            })
+        elif past_games_int != -1 and past_games_details:
+            elements.update({
+                "past_games_home": self.scrape_game_h2h_details(game_overview_url, "home", past_games_int, past_games_odds, past_games_events, past_games_stats),
+                "past_games_away": self.scrape_game_h2h_details(game_overview_url, "away", past_games_int, past_games_odds, past_games_events, past_games_stats),
+                "past_games_h2h": self.scrape_game_h2h_details(game_overview_url, "h2h", 1, past_games_odds, past_games_events, past_games_stats)
+            })
+
         output = PastGameDetails(**update_past_game_details(elements))
 
         if not mongodb_collection is None:
-            mongodb_collection.insert_one(output.dict())
+            mongodb_collection.insert_one(output.dict(exclude_unset=True))
 
+        print(f"[PAST] Extracted info for {output.dict()['home']} vs {output.dict()['away']} game.")
         return output
 
 
-    def get_past_games_list_details(self, results_url, last_n_rounds=1, odds=True, events=True, stats=True, mongodb_collection_name=None) -> List[PastGameDetails]:
+    def get_past_games_list_details(
+            self,
+            results_url,
+            last_n_rounds=1,
+            odds=True,
+            events=True,
+            stats=True, 
+            past_games=None, past_games_details=True, past_games_odds=True, past_games_events=True, past_games_stats=True, # if past_games=None, the rest past_games_... args doesn't matter
+            mongodb_collection_name=None) -> List[PastGameDetails]:
         """
         PAST GAMES - LIST WITH ALL DETAILS
         """
-        past_games = self.get_past_games_list_overview(results_url=results_url, last_n_rounds=last_n_rounds)
+        games = self.get_past_games_list_overview(results_url=results_url, last_n_rounds=last_n_rounds)
         output = [self.get_past_game_details(
-            game_overview_url=past_game.game_url, 
+            game_overview_url=game.game_url, 
             odds=odds,
             events=events, 
-            stats=stats, 
+            stats=stats,
+            past_games=past_games, 
+            past_games_details=past_games_details, 
+            past_games_odds=past_games_odds, 
+            past_games_events=past_games_events, 
+            past_games_stats=past_games_stats,
             mongodb_collection_name=mongodb_collection_name
-        ) for past_game in past_games]
+        ) for game in games]
+        
         return output
 
 
@@ -477,15 +521,32 @@ class FlashCrawler:
         return [PastGameStat(**process_stat(element)) for element in elements]
 
 
-    def update_post_game_info(self, future_game: Union[FutureGameOverview, FutureGameDetails], events=True, stats=True) -> FutureGameOverview:
+    def update_post_game_info(self, future_game: Union[FutureGameOverview, FutureGameDetails], odds=False, events=True, stats=True) -> FutureGameOverview:
         """
         POST GAME - RESULTS & ADDITIONAL INFORMATION
         """
         elements = future_game.dict()
-        past_game_details = self.get_past_game_details(
+        post_game_info = self.get_past_game_details(
             game_overview_url=elements["game_url"],
+            odds=odds,
             events=events, 
             stats=stats
             )
-        elements.update(past_game_details.dict())
-        return FutureGameDetails(**elements)
+        # goals_home, goals_away, events, stats
+        update_info = {key: post_game_info.dict()[key] for key in post_game_info.dict().keys() if key in ["goals_home", "goals_away", "events", "stats"]}
+        elements.update(update_info)
+        if elements["referee"] == "":
+            elements["referee"] = post_game_info.dict()["referee"]
+
+        output = FutureGameDetails(**elements)
+        
+        return output
+
+
+    def scrape_team_links_from_table(self, table_url: str) -> List:
+        # TODO: improve method for scraping team's links from table
+        self.driver.navigate_to(table_url)
+        team_links = self.driver.find_many_by_selector(".ui-table__row .tableCellParticipant__block >a:nth-child(2)", "href")
+        # links = [f"https://www.flashscore.com{link}results/" for link in links]
+
+        return team_links

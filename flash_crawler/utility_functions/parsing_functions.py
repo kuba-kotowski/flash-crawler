@@ -33,9 +33,6 @@ def update_future_game_details(future_game: Dict) -> Dict:
 
 
 def process_datetime(d: str) -> datetime:
-    if not re.findall("[0-9]{2}\.[0-9]{2}\.[0-9]{2}", d):
-        short_date = re.findall("[0-9]{2}\.[0-9]{2}\.", d)[0]
-        d = d.replace(short_date, f"{short_date}{date.today().year}")
     try:
         return datetime.strptime(d, "%d.%m.%Y %H:%M")
     except: 

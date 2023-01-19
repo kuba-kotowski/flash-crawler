@@ -65,6 +65,10 @@ class PastGameDetails(BaseModel):
     events: Optional[List[PastGameEvent]]
     stats: Optional[List[PastGameStat]]
     
+    past_games_home: Optional[List[PastGameOverview]]
+    past_games_away: Optional[List[PastGameOverview]]
+    past_games_h2h: Optional[List[PastGameOverview]]
+
     referee: str
     attendance: int
 
@@ -108,5 +112,5 @@ class FutureGameDetails(BaseModel):
     goals_away: Optional[int]
     events: Optional[List[PastGameEvent]]
     stats: Optional[List[PastGameStat]]
-    odds_winner: Optional[float]
+    # odds_winner: Optional[float]
     attendance: Optional[int]
