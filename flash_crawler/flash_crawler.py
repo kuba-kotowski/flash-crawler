@@ -414,6 +414,7 @@ class FlashCrawler:
             events=True,
             stats=True,
             past_games=None, past_games_details=True, past_games_odds=True, past_games_events=True, past_games_stats=True, # if past_games=None, the rest past_games_... args doesn't matter
+            h2h_past_games=None,
             mongodb_collection_name=None) -> PastGameDetails:
         """
         PAST GAME - ALL DETAILS
@@ -437,17 +438,18 @@ class FlashCrawler:
         elements["game_url"] = game_overview_url
 
         past_games_int = self.parse_past_games_argument(past_games)
+        h2h_past_games_int = self.parse_past_games_argument(h2h_past_games)
         if past_games_int != -1 and not past_games_details:
             elements.update({
                 "past_games_home": self.scrape_game_h2h(game_overview_url, "home", past_games_int),
                 "past_games_away": self.scrape_game_h2h(game_overview_url, "away", past_games_int),
-                "past_games_h2h": self.scrape_game_h2h(game_overview_url, "h2h", 1)
+                "past_games_h2h": self.scrape_game_h2h(game_overview_url, "h2h", h2h_past_games_int)
             })
         elif past_games_int != -1 and past_games_details:
             elements.update({
                 "past_games_home": self.scrape_game_h2h_details(game_overview_url, "home", past_games_int, past_games_odds, past_games_events, past_games_stats),
                 "past_games_away": self.scrape_game_h2h_details(game_overview_url, "away", past_games_int, past_games_odds, past_games_events, past_games_stats),
-                "past_games_h2h": self.scrape_game_h2h_details(game_overview_url, "h2h", 1, past_games_odds, past_games_events, past_games_stats)
+                "past_games_h2h": self.scrape_game_h2h_details(game_overview_url, "h2h", h2h_past_games_int, past_games_odds, past_games_events, past_games_stats)
             })
 
         output = PastGameDetails(**update_past_game_details(elements))
@@ -467,6 +469,7 @@ class FlashCrawler:
             events=True,
             stats=True, 
             past_games=None, past_games_details=True, past_games_odds=True, past_games_events=True, past_games_stats=True, # if past_games=None, the rest past_games_... args doesn't matter
+            h2h_past_games=None,
             mongodb_collection_name=None) -> List[PastGameDetails]:
         """
         PAST GAMES - LIST WITH ALL DETAILS
@@ -482,6 +485,7 @@ class FlashCrawler:
             past_games_odds=past_games_odds, 
             past_games_events=past_games_events, 
             past_games_stats=past_games_stats,
+            h2h_past_games=h2h_past_games,
             mongodb_collection_name=mongodb_collection_name
         ) for game in games]
         
