@@ -137,6 +137,15 @@ def update_odds_dc(odds: Dict) -> Dict:
     return odds_output
 
 
+def update_odds_btts(odds: Dict) -> Dict:
+    odds_output = odds.copy()
+    odds_output.update({
+        "odds_btts_yes": process_odds(odds_output["odds_btts_yes"]),
+        "odds_btts_no": process_odds(odds_output["odds_btts_no"]),
+    })
+    return odds_output
+
+
 def filter_odds_over_under(odds: List[Dict]) -> Dict:
     odds15 = [element for element in odds if element["goals"]=="1.5"]
     odds25 = [element for element in odds if element["goals"]=="2.5"]

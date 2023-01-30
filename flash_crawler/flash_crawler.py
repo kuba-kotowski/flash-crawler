@@ -2,9 +2,10 @@ from os import stat
 from datetime import datetime, date, timedelta
 from time import sleep
 from typing import Dict, List, Union
+import re
 
 from .engines import ScrapingEngine, ConfigParser
-from .utility_functions.parsing_functions import process_datetime, update_past_game_details, process_event, process_stat, update_future_game_details, filter_odds_over_under, update_odds_dc
+from .utility_functions.parsing_functions import process_datetime, update_past_game_details, process_event, process_stat, update_future_game_details, filter_odds_over_under, update_odds_dc, update_odds_btts
 from .models import PastGameOverview, PastGameDetails, FutureGameOverview, FutureGameDetails, PastGameEvent, PastGameStat, GameDetailedOdds
 
 
@@ -64,7 +65,10 @@ class FlashCrawler:
             return base_url.replace("/match-summary/match-summary", "/odds-comparison/over-under/full-time")
         elif "match-summary/match-summary" not in base_url and odds_type == "over_under":
             return base_url.replace("/match-summary", "/odds-comparison/over-under/full-time")
-
+        elif "match-summary/match-summary" in base_url and odds_type == "btts":
+            return base_url.replace("/match-summary/match-summary", "/odds-comparison/both-teams-to-score/full-time")
+        elif "match-summary/match-summary" not in base_url and odds_type == "btts":
+            return base_url.replace("/match-summary", "/odds-comparison/both-teams-to-score/full-time")
 
     @staticmethod
     def create_url_future_game_h2h(base_url) -> str:
@@ -81,7 +85,7 @@ class FlashCrawler:
         if "match-summary/match-summary" in base_url:
             return base_url.replace("match-summary/match-summary", "match-summary/match-statistics/0")
         else:
-            return base_url.replace("/match-summary", "match-summary/match-statistics/0")
+            return base_url.replace("/match-summary", "/match-summary/match-statistics/0")
 
 
     @staticmethod
@@ -102,14 +106,31 @@ class FlashCrawler:
         return containers[:n_games]
 
 
-    def filter_containers_date(self, containers, n_days):
-        end_date = datetime.combine(date.today() + timedelta(days=n_days), datetime.min.time())
+    def filter_containers_date(self, containers, n_days, include_today=True): #TODO: fix to get the selectors from config file
+        # past n-days - if include_today then it counts as day 
+
+        # end_date = datetime.combine(date.today() + timedelta(days=n_days), datetime.min.time())
+        if include_today and n_days<0:
+            n_days+=1
+        elif include_today and n_days>0:
+            n_days-=1
+        end_date = date.today() + timedelta(days=n_days)
+        
         output_containers = []
         for container in containers:
-            game_time = process_datetime(self.driver.find_one_by_selector(".event__time", "text", container))
-            if game_time > end_date:
+            # game_time = process_datetime(self.driver.find_one_by_selector(".event__time", "text", container))
+            game_time = self.driver.extract_all_elements(
+                all_elements_selectors={"popup::datetime": ".duelParticipant__startTime div::text"},
+                container=container
+            ) # it's dict so needs to take by key 'datetime' 
+            game_time = process_datetime(game_time.get("datetime"))
+
+            if not include_today and game_time.date() == datetime.now().date():
+                pass
+            elif (n_days>0 and game_time.date() > end_date) or (n_days<0 and game_time.date() < end_date):
                 break
-            output_containers.append(container)
+            else:
+                output_containers.append(container)
         return output_containers
 
 
@@ -260,6 +281,7 @@ class FlashCrawler:
         """
         elements = self.scrape_game_odds_double_chance(game_overview_url)
         elements.update(self.scrape_game_odds_over_under(game_overview_url))
+        elements.update(self.scrape_game_odds_btts(game_overview_url))
         return GameDetailedOdds(**elements)
 
 
@@ -272,6 +294,17 @@ class FlashCrawler:
         double_chance_odds_scenario = self.parser.get_elements_selectors("future_game/odds/double-chance") 
         elements = self.driver.extract_all_elements(double_chance_odds_scenario)
         return update_odds_dc(elements)
+
+
+    def scrape_game_odds_btts(self, game_overview_url: str) -> Dict:
+        """
+        FUTURE GAME ELEMENT - ODDS BTTS
+        """
+        odds_url_btts = self.create_url_future_game_odds(base_url=game_overview_url, odds_type="btts")
+        self.driver.navigate_to(odds_url_btts)
+        btts_odds_scenario = self.parser.get_elements_selectors("future_game/odds/btts") 
+        elements = self.driver.extract_all_elements(btts_odds_scenario)
+        return update_odds_btts(elements)
 
 
     def scrape_game_odds_over_under(self, game_overview_url: str) -> Dict:
@@ -369,7 +402,7 @@ class FlashCrawler:
         }
 
 
-    def get_past_games_list_overview(self, results_url, last_n_rounds=1, mongodb_collection_name=None, show_more_max_n=5) -> List[PastGameOverview]:
+    def get_past_games_list_overview(self, results_url, last_n_rounds=1, past_n_days=None, mongodb_collection_name=None, show_more_max_n=5) -> List[PastGameOverview]:
         """
         PAST GAMES OVERVIEW - LIST
         """
@@ -389,14 +422,18 @@ class FlashCrawler:
         game_containers_elements = self.parser.get_containers_elements_selectors("overview/results")
         containers = self.driver.find_many_by_selector(selector=game_containers_selector)
 
-        # get games only from n-last rounds/games:
-        if results_url.startswith("https://www.flashscore.com/team/"):
+        # get games only from n-last rounds/games or past n-days:
+        if past_n_days:
+            selected_games = self.filter_containers_date(containers, -past_n_days, include_today=False)
+        elif results_url.startswith("https://www.flashscore.com/team/"):
             selected_games = self.filter_containers_games_view(containers, last_n_rounds)
         else:
             selected_games = self.filter_containers_rounds_view(containers, last_n_rounds)
 
-        output = list()        
+        output = list()
+        i=1        
         for container in selected_games:
+            print(i)
             elements = self.driver.extract_all_elements(all_elements_selectors=game_containers_elements, container=container)
             elements["datetime"] = process_datetime(elements.get("datetime"))
             
@@ -404,6 +441,8 @@ class FlashCrawler:
                 mongodb_collection.insert_one(PastGameOverview(**elements).dict())
             
             output.append(PastGameOverview(**elements))
+
+            i+=1
 
         return output
 
@@ -429,6 +468,18 @@ class FlashCrawler:
         elements = self.driver.extract_all_elements(
             all_elements_selectors=elements_scenario
         )
+        #TODO: parsing club names
+        def if_country(team_name):
+            match = re.findall("\([A-z]{3}\)", team_name)
+            if match:
+                return team_name.strip(match[0]).strip(" ")
+            else:
+                return team_name
+        elements.update({
+            "home": if_country(elements["home"]),
+            "away": if_country(elements["away"])
+        })
+
         if odds:
             elements["odds"] = self.scrape_game_odds(game_overview_url)
         if events:
@@ -465,6 +516,7 @@ class FlashCrawler:
             self,
             results_url,
             last_n_rounds=1,
+            past_n_days=None,
             odds=True,
             events=True,
             stats=True, 
@@ -474,7 +526,7 @@ class FlashCrawler:
         """
         PAST GAMES - LIST WITH ALL DETAILS
         """
-        games = self.get_past_games_list_overview(results_url=results_url, last_n_rounds=last_n_rounds)
+        games = self.get_past_games_list_overview(results_url=results_url, last_n_rounds=last_n_rounds, past_n_days=past_n_days)
         output = [self.get_past_game_details(
             game_overview_url=game.game_url, 
             odds=odds,
@@ -551,6 +603,6 @@ class FlashCrawler:
         # TODO: improve method for scraping team's links from table
         self.driver.navigate_to(table_url)
         team_links = self.driver.find_many_by_selector(".ui-table__row .tableCellParticipant__block >a:nth-child(2)", "href")
-        # links = [f"https://www.flashscore.com{link}results/" for link in links]
+        team_links = [f"https://www.flashscore.com{link}results/" for link in team_links]
 
         return team_links

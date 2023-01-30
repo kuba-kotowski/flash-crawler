@@ -41,6 +41,11 @@ page_type:
       odds_dc_home: ".ui-table__body .ui-table__row:nth-child(1) .oddsCell__odd:nth-child(2) span::text"
       odds_dc_away:  ".ui-table__body .ui-table__row:nth-child(1) .oddsCell__odd:nth-child(4) span::text"
 
+  future_game/odds/btts:
+    elements:
+      odds_btts_yes: ".ui-table__body .ui-table__row:nth-child(1) .oddsCell__odd:nth-child(2) span::text"
+      odds_btts_no: ".ui-table__body .ui-table__row:nth-child(1) .oddsCell__odd:nth-child(3) span::text"
+
   future_game/odds/over-under:
     containers: 
       selector: ".ui-table.oddsCell__odds .ui-table__row"

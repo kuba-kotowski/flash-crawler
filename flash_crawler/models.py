@@ -39,6 +39,8 @@ class GameDetailedOdds(BaseModel):
     odds_under_15: float    # under 1.5 goals
     odds_over_25: float     # over 2.5 goals
     odds_under_25: float    # under 2.5 goals
+    odds_btts_yes: float    # both team to score
+    odds_btts_no: float     # both team not to score
 
 
 class PastGameDetails(BaseModel):
