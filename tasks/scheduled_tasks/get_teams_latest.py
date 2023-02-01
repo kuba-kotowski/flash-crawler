@@ -60,9 +60,7 @@ def get_teams_latest(table_url: str, collection_name: str, past_n_days=7):
     games_urls = [link.replace(
         "#/match-summary/match-summary", "#/match-summary") for link in games_urls]
     games_urls = list(set(games_urls))
-    print(len(games_urls))
     games_urls = [game_url for game_url in games_urls if game_url not in db_games_urls]
-    print(len(games_urls))
 
     for url in games_urls:
         spider.get_past_game_details(
