@@ -1,4 +1,4 @@
-name: Daily update (single league)
+name: One-off DB population with past games (single league)
 
 on:
   workflow_dispatch:
@@ -34,9 +34,9 @@ jobs:
 
       - name: Run Scraper
         run: |
-          COLLECTION_NAME=${{ github.event.inputs.collection_name }} 
-          TABLE_URL=${{ github.event.inputs.table_url }} 
-          python tasks/scheduled_tasks/get_teams_latest.py
+            python tasks/single_tasks/get_all_past.py
         env:
+          TABLE_URL: ${{ github.event.inputs.table_url }}
+          COLLECTION_NAME: ${{ github.event.inputs.collection_name }}
           MONGO_URI:  ${{secrets.MONGO_URI}}
           MONGODB_NAME: ${{secrets.MONGODB_NAME}}

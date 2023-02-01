@@ -86,9 +86,9 @@ if __name__ == "__main__":
     past_n_days = 1500
 
     table_urls = [
-        os.environ["TABLE_URL"]
+        os.getenv["TABLE_URL"]
     ]
-    collection_name = os.environ["COLLECTION_NAME"]
+    collection_name = os.getenv["COLLECTION_NAME"]
 
     get_all_past_games(
         table_urls=table_urls, # selected league
