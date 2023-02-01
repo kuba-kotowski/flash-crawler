@@ -79,17 +79,12 @@ def get_all_past_games(table_url, collection_name, past_n_days):
 
 
 if __name__ == "__main__":
-    # table_urls = [
-    #     "https://www.flashscore.com/football/italy/serie-a/standings/#/UcnjEEGS/table/overall"
-    #     ]
-    # collection_name = "football_main_italy"
-    past_n_days = 1500
-    
     collection_name = os.getenv("COLLECTION_NAME")
     table_url = os.getenv("TABLE_URL")
+    past_n_days = int(os.getenv("PAST_N_DAYS"))
 
     get_all_past_games(
         table_url=table_url, # selected league
         collection_name=collection_name, # collection to drop results
-        past_n_days=7 # last n-days, if None then it's based on the last date in DB
+        past_n_days=past_n_days # last n-days, if None then it's based on the last date in DB
     )

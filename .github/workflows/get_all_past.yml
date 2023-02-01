@@ -9,6 +9,9 @@ on:
       table_url:
         description: "Url to league's table"
         required: true
+      past_n_days:
+        description: "Include games from past n-days"
+        required: true
 
 env:
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
@@ -38,5 +41,6 @@ jobs:
         env:
           TABLE_URL: ${{ github.event.inputs.table_url }}
           COLLECTION_NAME: ${{ github.event.inputs.collection_name }}
+          PAST_N_DAYS: ${{ github.event.inputs.past_n_days }}
           MONGO_URI:  ${{secrets.MONGO_URI}}
           MONGODB_NAME: ${{secrets.MONGODB_NAME}}

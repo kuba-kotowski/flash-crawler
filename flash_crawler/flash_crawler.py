@@ -466,9 +466,9 @@ class FlashCrawler:
         )
         #TODO: parsing club names
         def if_country(team_name):
-            match = re.findall("\([A-z]{3}\)", team_name)
+            match = re.findall(" \([A-z]{3}\)", team_name)
             if match:
-                return team_name.strip(match[0]).strip(" ")
+                return team_name.replace(match[0], "").strip(" ")
             else:
                 return team_name
         elements.update({
