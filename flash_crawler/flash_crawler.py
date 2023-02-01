@@ -431,9 +431,7 @@ class FlashCrawler:
             selected_games = self.filter_containers_rounds_view(containers, last_n_rounds)
 
         output = list()
-        i=1        
         for container in selected_games:
-            print(i)
             elements = self.driver.extract_all_elements(all_elements_selectors=game_containers_elements, container=container)
             elements["datetime"] = process_datetime(elements.get("datetime"))
             
@@ -441,8 +439,6 @@ class FlashCrawler:
                 mongodb_collection.insert_one(PastGameOverview(**elements).dict())
             
             output.append(PastGameOverview(**elements))
-
-            i+=1
 
         return output
 
@@ -599,7 +595,7 @@ class FlashCrawler:
         return output
 
 
-    def scrape_team_links_from_table(self, table_url: str) -> List:
+    def scrape_team_results_url_from_table(self, table_url: str) -> List:
         # TODO: improve method for scraping team's links from table
         self.driver.navigate_to(table_url)
         team_links = self.driver.find_many_by_selector(".ui-table__row .tableCellParticipant__block >a:nth-child(2)", "href")
