@@ -79,11 +79,16 @@ def get_all_past_games(table_urls: List[str], collection_name, past_n_days):
 
 
 if __name__ == "__main__":
-    table_urls = [
-        "https://www.flashscore.com/football/italy/serie-a/standings/#/UcnjEEGS/table/overall"
-        ]
-    collection_name = "football_main_italy"
+    # table_urls = [
+    #     "https://www.flashscore.com/football/italy/serie-a/standings/#/UcnjEEGS/table/overall"
+    #     ]
+    # collection_name = "football_main_italy"
     past_n_days = 1500
+
+    table_urls = [
+        os.environ["TABLE_URL"]
+    ]
+    collection_name = os.environ["COLLECTION_NAME"]
 
     get_all_past_games(
         table_urls=table_urls, # selected league
