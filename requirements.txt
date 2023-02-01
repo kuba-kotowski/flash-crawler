@@ -5,3 +5,4 @@ playwright_stealth==1.0.5
 pydantic==1.10.2
 PyYAML==6.0
 pymongo
+pandas
