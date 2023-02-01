@@ -18,7 +18,7 @@ database_name = os.getenv("MONGODB_NAME")
 mongodb = pymongo.MongoClient(os.getenv("MONGO_URI"))[database_name]
 
 
-def get_all_past_games(table_urls: List[str], collection_name, past_n_days):
+def get_all_past_games(table_url, collection_name, past_n_days):
     # checking which games are already in db:
     db_games_urls = mongodb[collection_name].find({}, {"game_url": 1, "_id": 0})
     db_games_urls = list(set([game["game_url"].replace(
@@ -32,10 +32,10 @@ def get_all_past_games(table_urls: List[str], collection_name, past_n_days):
     )
 
     # Get all teams that appeard in the provided tables (table_urls) - it might be tables from several seasons
-    teams_results = []
-    for table_url in table_urls:
-        teams_results += spider.scrape_team_results_url_from_table(table_url)
-    teams_results = list(set(teams_results))
+    # teams_results = []
+    # for table_url in table_urls:
+    teams_results = spider.scrape_team_results_url_from_table(table_url)
+    # teams_results = list(set(teams_results))
 
     games_overview = []
     for url in teams_results:
@@ -84,14 +84,12 @@ if __name__ == "__main__":
     #     ]
     # collection_name = "football_main_italy"
     past_n_days = 1500
-
-    table_urls = [
-        os.getenv["TABLE_URL"]
-    ]
+    
     collection_name = os.getenv["COLLECTION_NAME"]
+    table_url = os.getenv["TABLE_URL"]
 
     get_all_past_games(
-        table_urls=table_urls, # selected league
+        table_url=table_url, # selected league
         collection_name=collection_name, # collection to drop results
         past_n_days=7 # last n-days, if None then it's based on the last date in DB
     )
