@@ -35,6 +35,7 @@ def get_all_past_games(table_url, collection_name, past_n_days):
     # teams_results = []
     # for table_url in table_urls:
     teams_results = spider.scrape_team_results_url_from_table(table_url)
+    print(teams_results)
     # teams_results = list(set(teams_results))
 
     games_overview = []
@@ -42,7 +43,8 @@ def get_all_past_games(table_url, collection_name, past_n_days):
         games_overview += spider.get_past_games_list_overview(
 			results_url=url, 
 			past_n_days=past_n_days,
-			show_more_max_n=7
+			show_more_max_n=5, 
+            mongodb_collection_name="links_temp"
 		)
     games_urls = [game.dict().get("game_url") for game in games_overview]
     games_urls = [game_url.replace("#/match-summary/match-summary", "#/match-summary") for game_url in games_urls]
@@ -79,9 +81,13 @@ def get_all_past_games(table_url, collection_name, past_n_days):
 
 
 if __name__ == "__main__":
-    collection_name = os.getenv("COLLECTION_NAME")
-    table_url = os.getenv("TABLE_URL")
-    past_n_days = int(os.getenv("PAST_N_DAYS"))
+    # collection_name = os.getenv("COLLECTION_NAME")
+    # table_url = os.getenv("TABLE_URL")
+    # past_n_days = int(os.getenv("PAST_N_DAYS"))
+
+    collection_name = "football_test"
+    table_url = "https://www.flashscore.com/football/spain/laliga/standings/#/COQ6iu30/table/overall"
+    past_n_days = 120
 
     get_all_past_games(
         table_url=table_url, # selected league
