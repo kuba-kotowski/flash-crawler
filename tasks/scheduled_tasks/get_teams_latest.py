@@ -68,7 +68,7 @@ def get_teams_latest(table_url: str, collection_name: str, past_n_days=None):
             additional_h2h += spider.scrape_game_h2h(
                 game_overview_url=url,
                 h2h_type=h2h_type,
-                show_more=1
+                show_more=3
             )
     additional_h2h = [game.dict().get("game_url") for game in additional_h2h]
     additional_h2h = [game_url.replace("#/match-summary/match-summary", "#/match-summary") for game_url in additional_h2h]

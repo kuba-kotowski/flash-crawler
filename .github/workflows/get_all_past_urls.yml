@@ -3,11 +3,14 @@ name: Getting all past games urls
 on:
   workflow_dispatch:
     inputs:
+      table_url:
+        description: "Url to league's table"
+        required: true
       collection_name:
         description: 'Collection name to drop results'
         required: true
-      table_url:
-        description: "Url to league's table"
+      past_n_days:
+        description: "Past n-days to scrape"
         required: true
 
 env:
@@ -36,7 +39,8 @@ jobs:
         run: |
             python tasks/single_tasks/get_all_past_urls.py
         env:
-          COLLECTION_NAME: ${{ github.event.inputs.collection_name }}
           TABLE_URL: ${{ github.event.inputs.table_url }}
+          COLLECTION_NAME: ${{ github.event.inputs.collection_name }}
+          PAST_N_DAYS: ${{ github.event.inputs.past_n_days }}
           MONGO_URI:  ${{secrets.MONGO_URI}}
           MONGODB_NAME: ${{secrets.MONGODB_NAME}}
