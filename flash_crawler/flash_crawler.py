@@ -431,14 +431,20 @@ class FlashCrawler:
             selected_games = self.filter_containers_rounds_view(containers, last_n_rounds)
 
         output = list()
+        i=1
+        print(len(selected_games))
         for container in selected_games:
-            elements = self.driver.extract_all_elements(all_elements_selectors=game_containers_elements, container=container)
-            elements["datetime"] = process_datetime(elements.get("datetime"))
-            
-            if not mongodb_collection is None:
-                mongodb_collection.insert_one(PastGameOverview(**elements).dict())
-            
-            output.append(PastGameOverview(**elements))
+            try:
+                elements = self.driver.extract_all_elements(all_elements_selectors=game_containers_elements, container=container)
+                elements["datetime"] = process_datetime(elements.get("datetime"))
+                
+                if not mongodb_collection is None:
+                    mongodb_collection.insert_one(PastGameOverview(**elements).dict())
+                
+                output.append(PastGameOverview(**elements))
+            except Exception as e:
+                print(i, e)
+            i+=1
 
         return output
 

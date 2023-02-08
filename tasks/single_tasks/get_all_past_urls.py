@@ -42,14 +42,17 @@ def get_teams_latest(table_url: str, collection_name: str, past_n_days=360):
     additional_h2h = []
     for url in games_urls:
         for h2h_type in ["home", "away", "h2h"]:
-            additional_urls = spider.scrape_game_h2h(
-                game_overview_url=url,
-                h2h_type=h2h_type,
-                show_more=3
-            )
-            additional_urls = [url for url in additional_urls if url.dict().get("game_url") not in games_urls]
-            mongodb[collection_name].insert_many(additional_urls)
-            additional_h2h+=additional_urls
+            try:
+                additional_urls = spider.scrape_game_h2h(
+                    game_overview_url=url,
+                    h2h_type=h2h_type,
+                    show_more=3
+                )
+                additional_urls = [url for url in additional_urls if url.dict().get("game_url") not in games_urls]
+                mongodb[collection_name].insert_many(additional_urls)
+                additional_h2h+=additional_urls
+            except Exception as e:
+                mongodb["missing_h2h_urls"].insert_one({"url": url, "exception": str(e)})
     
     spider.driver.browser.close()
     spider.driver.playwright.stop()
