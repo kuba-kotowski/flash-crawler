@@ -67,5 +67,5 @@ if __name__ == "__main__":
     get_teams_latest(
         table_url=table_url, # selected league
         collection_name=collection_name, # collection to drop results
-        past_n_days=past_n_days # last n-days, if None then it's based on the last date in DB
+        past_n_days=int(past_n_days) # last n-days, if None then it's based on the last date in DB
     )
