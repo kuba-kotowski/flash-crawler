@@ -16,7 +16,7 @@ database_name = os.getenv("MONGODB_NAME")
 mongodb = pymongo.MongoClient(os.getenv("MONGO_URI"))[database_name]
 
 
-def get_teams_latest(table_url: str, collection_name: str, past_n_days=7):
+def get_teams_latest(table_url: str, collection_name: str, past_n_days=None):
     """
     Scraping details for last games of teams from the given league (based on the table standings).
     Either based on the last date in DB or from last n-days but not games that already in DB.
@@ -54,7 +54,7 @@ def get_teams_latest(table_url: str, collection_name: str, past_n_days=7):
         games_overview += spider.get_past_games_list_overview(
             results_url=url,
             past_n_days=delta_days,
-            show_more_max_n=1
+            show_more_max_n=7
         )
     games_urls = [game.dict().get("game_url") for game in games_overview]
     games_urls = [link.replace(
@@ -62,7 +62,21 @@ def get_teams_latest(table_url: str, collection_name: str, past_n_days=7):
     games_urls = list(set(games_urls))
     games_urls = [game_url for game_url in games_urls if game_url not in db_games_urls]
 
+    additional_h2h = []
     for url in games_urls:
+        for h2h_type in ["home", "away", "h2h"]:
+            additional_h2h += spider.scrape_game_h2h(
+                game_overview_url=url,
+                h2h_type=h2h_type,
+                show_more=1
+            )
+    additional_h2h = [game.dict().get("game_url") for game in additional_h2h]
+    additional_h2h = [game_url.replace("#/match-summary/match-summary", "#/match-summary") for game_url in additional_h2h]
+    additional_h2h = [game_url for game_url in list(set(additional_h2h)) if game_url not in db_games_urls]
+
+    final_urls = list(set(games_urls + additional_h2h))
+
+    for url in final_urls:
         spider.get_past_game_details(
             url,
             odds=True,
@@ -76,14 +90,13 @@ def get_teams_latest(table_url: str, collection_name: str, past_n_days=7):
     spider.driver.playwright.stop()
 
 
-
 if __name__ == "__main__":
     table_url = "https://www.flashscore.com/football/italy/serie-a/standings/#/UcnjEEGS/table/overall"
     collection_name = "football_main_v2"
-    past_n_days = 7
+    past_n_days = 3 # although task will run everyday it's safe buffor (if any day or two is skipped due to some technical issues)
 
     get_teams_latest(
         table_url=table_url, # selected league
         collection_name=collection_name, # collection to drop results
-        past_n_days=7 # last n-days, if None then it's based on the last date in DB
+        past_n_days=past_n_days # last n-days, if None then it's based on the last date in DB
     )
