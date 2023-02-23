@@ -80,7 +80,10 @@ def process_stat(stat: Dict) -> Dict:
 
 def process_stat_value(value: str) -> int:
     if "%" not in value:
-        return int(value)
+        try:
+            return int(value)
+        except ValueError:
+            return float(value)
     else:
         return int(value.replace("%", ""))/100
 
