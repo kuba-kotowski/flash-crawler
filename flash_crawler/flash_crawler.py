@@ -604,6 +604,7 @@ class FlashCrawler:
     def scrape_team_results_url_from_table(self, table_url: str) -> List:
         # TODO: improve method for scraping team's links from table
         self.driver.navigate_to(table_url)
+        sleep(2)
         team_links = self.driver.find_many_by_selector(".ui-table__row .tableCellParticipant__block >a:nth-child(2)", "href")
         team_links = [f"https://www.flashscore.com{link}results/" for link in team_links]
 
