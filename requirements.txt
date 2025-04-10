@@ -1,9 +1,1 @@
-beautifulsoup4==4.11.1
-fake-useragent==1.1.1
-playwright==1.26.1
-playwright_stealth==1.0.5
-pydantic==1.10.2
-PyYAML==6.0
-pymongo
-pandas
-python-dotenv
+git+https://github.com/kuba-kotowski/plug-and-crawl

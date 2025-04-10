@@ -1,0 +1,47 @@
+{
+    ":root": {},
+    ":locators": [
+        {
+            "name": "stats",
+            "selector": {"css": "div[data-testid='wcl-statistics']"},
+            "options": {
+                "flat": true
+            },
+            "fields": [
+                {
+                    "name": "stat_name",
+                    "selector": {
+                        "css": "[data-testid='wcl-statistics-category']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "value_home",
+                    "selector": {
+                        "css": "[data-testid='wcl-statistics-value']:nth-child(1)",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    } 
+                },
+                {
+                    "name": "value_away",
+                    "selector": {
+                        "css": "[data-testid='wcl-statistics-value']:nth-child(3)",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    } 
+                }
+            ]
+        }
+    ]
+}

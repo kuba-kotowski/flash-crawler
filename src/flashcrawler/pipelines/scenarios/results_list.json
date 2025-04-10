@@ -1,0 +1,96 @@
+{
+    ":name": "PastResults",
+    ":root": {
+        "fields": [
+            {
+                "name": "season",
+                "selector": {
+                    "css": ".heading__info",
+                    "attribute": "text"
+                },
+                "options": {
+                    "required": true,
+                    "type": "str"
+                }
+            },
+            {
+                "name": "league",
+                "selector": {
+                    "css": ".heading__name",
+                    "attribute": "text"
+                },
+                "options": {
+                    "required": true,
+                    "type": "str"
+                }
+            }
+        ]
+    },
+    ":locators": [
+        {
+            "name": "results",
+            "selector": {"css": ".event__match"
+            },
+            "options": {
+                "flat": true
+            },
+            "fields": [
+                {
+                    "name": "url",
+                    "selector": {
+                        "css": "a", 
+                        "attribute": "href"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "home",
+                    "selector": {
+                        "css": ".event__homeParticipant",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "away",
+                    "selector": {
+                        "css": ".event__awayParticipant",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "goals_home",
+                    "selector": {
+                        "css": ".event__score.event__score--home",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "int"
+                    }
+                },
+                {
+                    "name": "goals_away",
+                    "selector": {
+                        "css": ".event__score.event__score--away",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "int"
+                    }
+                }
+            ]
+        }
+    ]
+}

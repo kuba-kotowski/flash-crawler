@@ -1,0 +1,87 @@
+{
+    ":root": {},
+    ":locators": [
+        {
+            "name": "events",
+            "selector": {"css": ".smv__verticalSections.section > div"},
+            "options": {
+                "flat": true
+            },
+            "fields": [
+                {
+                    "name": "header",
+                    "selector": {
+                        "css": "> span:nth-child(1)",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": false,
+                        "type": "str"
+                    } 
+                },
+                {
+                    "name": "type",
+                    "selector": [{
+                        "css": ".smv__incidentIcon svg",
+                        "attribute": "data-testid"
+                    },
+                    {
+                        "css": ".smv__incidentIcon svg",
+                        "attribute": "class"
+                    },
+                    {
+                        "css": ".smv__incidentIconSub svg",
+                        "attribute": "class"
+                    }],
+                    "options": {
+                        "required": false,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "time",
+                    "selector": {
+                        "css": ".smv__timeBox",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": false,
+                        "type": "str"
+                    } 
+                },
+                {
+                    "name": "player",
+                    "selector": {
+                        "css": ".smv__playerName",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": false,
+                        "type": "str"
+                    } 
+                },
+                {
+                    "name": "additional_info",
+                    "selector": [
+                        {
+                            "css": ".smv__subDown.smv__playerName",
+                            "attribute": "text"
+                        },
+                        {
+                            "css": ".smv__assist",
+                            "attribute": "text"
+                        },
+                        {
+                            "css": ".smv__subIncident",
+                            "attribute": "text"
+                        }
+                    ],
+                    "options": {
+                        "required": false,
+                        "type": "str"
+                    } 
+                }
+            ]
+        }
+    ]
+}

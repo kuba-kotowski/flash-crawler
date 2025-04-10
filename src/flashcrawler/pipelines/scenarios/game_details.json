@@ -1,0 +1,106 @@
+{
+    ":root": {
+        "fields": [
+            {
+                "name": "datetime",
+                "selector": {
+                    "css": ".duelParticipant__startTime",
+                    "attribute": "text"
+                },
+                "options": {
+                    "required": true,
+                    "type": "str"
+                }
+            },
+            {
+                "name": "home",
+                "selector": {
+                    "css": ".duelParticipant__home a.participant__participantName",
+                    "attribute": "text"
+                },
+                "options": {
+                    "required": true,
+                    "type": "str"
+                }
+            },
+            {
+                "name": "home_url",
+                "selector": {
+                    "css": ".duelParticipant__home a.participant__participantName",
+                    "attribute": "href"
+                },
+                "options": {
+                    "required": true,
+                    "type": "str"
+                }
+            },
+            {
+                "name": "away",
+                "selector": {
+                    "css": ".duelParticipant__away a.participant__participantName",
+                    "attribute": "text"
+                },
+                "options": {
+                    "required": true,
+                    "type": "str"
+                }
+            },
+            {
+                "name": "away_url",
+                "selector": {
+                    "css": ".duelParticipant__away a.participant__participantName",
+                    "attribute": "href"
+                },
+                "options": {
+                    "required": true,
+                    "type": "str"
+                }
+            },
+            {
+                "name": "goals_home",
+                "selector": {
+                    "css": ".duelParticipant__score .detailScore__wrapper span:nth-child(1)",
+                    "attribute": "text"
+                },
+                "options": {
+                    "required": true,
+                    "type": "int"
+                }
+            },
+            {
+                "name": "goals_away",
+                "selector": {
+                    "css": ".duelParticipant__score .detailScore__wrapper span:nth-child(3)",
+                    "attribute": "text"
+                },
+                "options": {
+                    "required": true,
+                    "type": "int"
+                }
+            },
+            {
+                "name": "fulltime",
+                "selector": {
+                    "css": ".detailScore__fullTime",
+                    "attribute": "text"
+                },
+                "options": {
+                    "required": false,
+                    "type": "str"
+                }
+            },
+            {
+                "name": "details",
+                "selector": {
+                    "css": ".detailScore__status",
+                    "attribute": "text"
+                },
+                "options": {
+                    "required": false,
+                    "type": "str"
+                }
+            }
+        ]
+    },
+    ":locators": []
+}

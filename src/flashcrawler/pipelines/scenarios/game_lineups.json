@@ -1,0 +1,334 @@
+{
+    ":root": {
+        "fields": [
+            {
+                "name": "formations",
+                "selector": {
+                    "css": "[data-analytics-context='tab-lineups'] > [class='section'] [class^='wcl-overline']:nth-child(2n+1)",
+                    "attribute": "text"
+                },
+                "options": {
+                    "many": true,
+                    "required": false,
+                    "type": "str"
+                }
+            },
+            {
+                "name": "team_ratings",
+                "selector": {
+                    "css": ".lf__teamRatingWrapper",
+                    "attribute": "text"
+                },
+                "options": {
+                    "many": true,
+                    "required": false,
+                    "type": "float"
+                }
+            }
+        ]
+    },
+    ":locators": [
+        {
+            "name": "pitch_lineups",
+            "selector": {"css": ".lf__field [class*='lf__formation'] .lf__player"},
+            "options": {
+                "flat": false
+            },
+            "fields": [
+                {
+                    "name": "number",
+                    "selector": {
+                        "css": "[class*='wcl-participantNumber']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "int"
+                    }
+                },
+                {
+                    "name": "name",
+                    "selector": {
+                        "css": "[class*='wcl-participantName']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "url",
+                    "selector": {
+                        "css": "[class*='wcl-participantName']",
+                        "attribute": "href"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                
+                {
+                    "name": "rating",
+                    "selector": {
+                        "css": "[class*='wcl-rating']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "float"
+                    } 
+                }
+            ]
+        },
+        {
+            "name": "substitutes",
+            "selector": {"css": "[data-testid*='wcl-lineupsParticipantsSubstitution']"},
+            "options": {
+                "flat": false
+            },
+            "fields": [
+                {
+                    "name": "name",
+                    "selector": {
+                        "css": "[class*='wcl-nameWrapper']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "url",
+                    "selector": {
+                        "css": "[class*='wcl-nameWrapper']",
+                        "attribute": "href"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "time",
+                    "selector": {
+                        "css": "[class*='wcl-minute']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "substitute_player_name",
+                    "selector": {
+                        "css": "[class*='wcl-subName']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "rating",
+                    "selector": {
+                        "css": "[class*='wcl-badgeRating']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": false,
+                        "type": "float"
+                    } 
+                }
+            ]
+        },
+        {
+            "name": "players",
+            "selector": [
+                {"css": ".lf__lineUp > .section:has-text('starting lineups') .lf__participantNew"},
+                {"css": ".lf__lineUp > .section:has-text('substitutes') .lf__participantNew"}
+            ],
+            "options": {
+                "flat": false
+            },
+            "fields": [
+                {
+                    "name": "side",
+                    "selector": {
+                        "css": "",
+                        "attribute": "class"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "number",
+                    "selector": {
+                        "css": "[class*='wcl-number']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "int"
+                    }
+                },
+                {
+                    "name": "country",
+                    "selector": {
+                        "css": "[class*='wcl-assetContainer']",
+                        "attribute": "title"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "name",
+                    "selector": {
+                        "css": "[class*='wcl-nameWrapper']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "url",
+                    "selector": {
+                        "css": "[class*='wcl-nameWrapper']",
+                        "attribute": "href"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },                
+                {
+                    "name": "role",
+                    "selector": {
+                        "css": "[class*='wcl-nameWrapper']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "missing_players",
+            "selector": {"css": ".lf__lineUp .loadable.complete .section:has-text('missing players') .lf__participantNew"},
+            "options": {
+                "flat": false
+            },
+            "fields": [
+                {
+                    "name": "side",
+                    "selector": {
+                        "css": "",
+                        "attribute": "class"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "country",
+                    "selector": {
+                        "css": "[class*='wcl-assetContainer']",
+                        "attribute": "title"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "name",
+                    "selector": {
+                        "css": "[class*='wcl-nameWrapper']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "url",
+                    "selector": {
+                        "css": "[class*='wcl-nameWrapper']",
+                        "attribute": "href"
+                    },
+                    "options": {
+                        "required": false,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "description",
+                    "selector": {
+                        "css": "[class*='wcl-description']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "coaches",
+            "selector": {"css": ".lf__lineUp > .section:has-text('coaches') .lf__participantNew"},
+            "options": {
+                "flat": false
+            },
+            "fields": [
+                {
+                    "name": "side",
+                    "selector": {
+                        "css": "",
+                        "attribute": "class"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "name",
+                    "selector": {
+                        "css": "[class*='wcl-nameWrapper']",
+                        "attribute": "text"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                },
+                {
+                    "name": "country",
+                    "selector": {
+                        "css": "[class*='wcl-assetContainer']",
+                        "attribute": "title"
+                    },
+                    "options": {
+                        "required": true,
+                        "type": "str"
+                    }
+                }
+            ]
+        }
+    ]
+}
