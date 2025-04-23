@@ -9,10 +9,8 @@ class GameDetailsLineups(BasePipeline):
         return 'GameDetailsLineups'
 
     async def prepare_page(self, page):
-        await page.click('button#onetrust-reject-all-handler', required=False)
-        await page.wait_for_timeout(3000)
         await page.click(".filterOver a[href*='/lineups']")
-        await page.wait_for_timeout(3000)
+        await page.wait_for_timeout(1000)
 
     @staticmethod
     def process_name(value):

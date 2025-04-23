@@ -32,7 +32,7 @@
             "selector": {"css": ".event__match"
             },
             "options": {
-                "flat": true
+                "flat": false
             },
             "fields": [
                 {
@@ -49,7 +49,7 @@
                 {
                     "name": "home",
                     "selector": {
-                        "css": ".event__homeParticipant",
+                        "css": ".event__homeParticipant strong, .event__homeParticipant span",
                         "attribute": "text"
                     },
                     "options": {
@@ -60,7 +60,7 @@
                 {
                     "name": "away",
                     "selector": {
-                        "css": ".event__awayParticipant",
+                        "css": ".event__awayParticipant strong, .event__awayParticipant span",
                         "attribute": "text"
                     },
                     "options": {

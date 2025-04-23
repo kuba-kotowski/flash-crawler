@@ -21,7 +21,7 @@ if __name__ == '__main__':
     ]
     asyncio.run(
         pipelines_manager.run(
-            input_data=input, 
+            input_data=input_data, 
             headless=False
         )
     )

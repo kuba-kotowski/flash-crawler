@@ -2,22 +2,19 @@ import os
 from plugandcrawl import BasePipeline
 
 
-class GameDetails(BasePipeline):
-    scenario = rf'{os.path.dirname(__file__)}/scenarios/game_details.json'
-
-    def __str__(self):
-        return 'GameDetails'
-
-    async def prepare_page(self, page):
-        await page.click('button#onetrust-reject-all-handler', required=False)
-
-    @staticmethod
-    def process_home_url(value):
-        return f"https://www.flashscore.com{value}"
-    
-    @staticmethod
-    def process_away_url(value):
-        return f"https://www.flashscore.com{value}"
+def parse_team_url(value):
+    return f"https://www.flashscore.com{value}"
 
 
-game_details_pipeline = GameDetails()
+game_details_pipeline = BasePipeline()
+
+game_details_pipeline.scenario = rf'{os.path.dirname(__file__)}/scenarios/game_details.json'
+
+# parsing method for field 'round':
+game_details_pipeline.process_round = lambda value: value.split('-', 1)[-1].strip()
+
+# parsing method for field 'home_ur':
+game_details_pipeline.process_home_url = parse_team_url 
+
+# parsing method for field 'away_url':
+game_details_pipeline.process_away_url = parse_team_url

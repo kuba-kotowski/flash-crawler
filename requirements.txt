@@ -1,1 +1,1 @@
-git+https://github.com/kuba-kotowski/plug-and-crawl
+git+https://github.com/kuba-kotowski/plug-and-crawl@development

@@ -1,4 +1,5 @@
 {
+    ":name": "Details",
     ":root": {
         "fields": [
             {
@@ -9,6 +10,17 @@
                 },
                 "options": {
                     "required": true,
+                    "type": "str"
+                }
+            },
+            {
+                "name": "round",
+                "selector": {
+                    "css": ".detail__breadcrumbs li[class^='wcl-breadcrumbItem']:last-of-type span",
+                    "attribute": "text"
+                },
+                "options": {
+                    "required": false,
                     "type": "str"
                 }
             },
