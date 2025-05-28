@@ -23,7 +23,8 @@ class GameDetailsTask:
             game_lineups_pipeline,
         ]
         self.pipeline_manager.on_error = self.on_error # DONT WORK AND LINEUPS THROWS ERROR PROBABLY?
-        self.pipeline_manager.post_single_url = self.save_results
+        # self.pipeline_manager.post_single_url = self.save_results
+        self.pipeline_manager.post_single_url = print
 
     @staticmethod
     def on_error(input, error):
